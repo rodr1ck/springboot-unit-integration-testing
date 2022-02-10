@@ -107,4 +107,27 @@ public class EmployeeRepositoryTests {
         assertThat(employeeDB).isNotNull();
     }
 
+    //JUnit test for update employee operation
+    @DisplayName("JUnit test for update employee operation")
+    @Test
+    public void givenEmployeeObject_whenUpdateEmployee_thenReturnUpdatedEmployee() {
+        //given - precondition or setup
+        Employee employee = Employee.builder()
+                .firstName("Rodrigo")
+                .lastName("Rivera")
+                .email("rodrigo.rivera@gmail.com")
+                .build();
+        employeeRepository.save(employee);
+
+        //when - action or the behaviour we are going to test
+        Employee savedEmployee = employeeRepository.findById(employee.getId()).get();
+        savedEmployee.setEmail("rivera.rodrigo@gmail.com");
+        savedEmployee.setFirstName("Domingo");
+        Employee updatedEmployee = employeeRepository.save(savedEmployee);
+
+        //then - verify the output
+        assertThat(updatedEmployee.getEmail()).isEqualTo("rivera.rodrigo@gmail.com");
+        assertThat(updatedEmployee.getFirstName()).isEqualTo("Domingo");
+    }
+
 }
