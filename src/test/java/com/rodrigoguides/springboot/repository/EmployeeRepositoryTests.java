@@ -7,9 +7,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
+import java.util.Optional;
 
 @DataJpaTest
 public class EmployeeRepositoryTests {
@@ -128,6 +130,26 @@ public class EmployeeRepositoryTests {
         //then - verify the output
         assertThat(updatedEmployee.getEmail()).isEqualTo("rivera.rodrigo@gmail.com");
         assertThat(updatedEmployee.getFirstName()).isEqualTo("Domingo");
+    }
+
+    //JUnit test for delete employee operation
+    @DisplayName("JUnit test for delete employee operation")
+    @Test
+    public void givenEmployeeObject_whenDelete_thenRemoveEmployee() {
+        //given - precondition or setup
+        Employee employee = Employee.builder()
+                .firstName("Rodrigo")
+                .lastName("Rivera")
+                .email("rodrigo.rivera@gmail.com")
+                .build();
+        employeeRepository.save(employee);
+
+        //when - action or the behaviour we are going to test
+        employeeRepository.delete(employee);
+        Optional<Employee> employeeOptional = employeeRepository.findById(employee.getId());
+
+        //then - verify the output
+        assertThat(employeeOptional).isEmpty();
     }
 
 }
