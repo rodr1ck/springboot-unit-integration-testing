@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
@@ -132,6 +133,20 @@ public class EmployeeServiceTests {
         //then - verify the output
         Assertions.assertThat(employeeList).isEmpty();
         Assertions.assertThat(employeeList.size()).isEqualTo(0);
+    }
+
+    //JUnit test for EmployeeService getEmployeeById method
+    @DisplayName("JUnit test for EmployeeService getEmployeeById method")
+    @Test
+    public void givenEmployeeId_whenGetEmployeeById_thenReturnEmployeeObject() {
+        //given - precondition or setup
+        given(employeeRepository.findById(1L)).willReturn(Optional.of(employee));
+
+        //when - action or the behaviour we are going to test
+        Employee savedEmployee = employeeService.getEmployeeById(employee.getId()).get();
+
+        //then - verify the output
+        assertThat(savedEmployee).isNotNull();
     }
 
 }
