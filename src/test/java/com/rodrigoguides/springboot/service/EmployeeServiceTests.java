@@ -1,5 +1,6 @@
 package com.rodrigoguides.springboot.service;
 
+import com.rodrigoguides.springboot.exception.ResourceNotFoundException;
 import com.rodrigoguides.springboot.model.Employee;
 import com.rodrigoguides.springboot.repository.EmployeeRepository;
 import com.rodrigoguides.springboot.service.impl.EmployeeServiceImpl;
@@ -8,7 +9,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.*;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -58,4 +64,28 @@ public class EmployeeServiceTests {
         //then - verify the output
         Assertions.assertThat(savedEmployee).isNotNull();
     }
+
+    //JUnit test for save Employee method which throws exception
+    @DisplayName("JUnit test for save Employee method which throws exception")
+    @Test
+    public void givenExistingEmail_whenSaveEmployee_thenThrowsException() {
+        //given - precondition or setup
+
+        given(employeeRepository.findByEmail(employee.getEmail())).willReturn(Optional.of(employee));
+
+       // given(employeeRepository.save(employee)).willReturn(employee);
+
+        System.out.println(employeeRepository);
+        System.out.println(employeeService);
+
+        //when - action or the behaviour we are going to test
+        org.junit.jupiter.api.Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+                employeeService.saveEmployee(employee);
+        });
+
+        //then - verify the output
+        verify(employeeRepository, never()).save(any(Employee.class));
+
+    }
+
 }
