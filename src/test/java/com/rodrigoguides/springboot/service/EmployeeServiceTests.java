@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
@@ -73,19 +74,40 @@ public class EmployeeServiceTests {
 
         given(employeeRepository.findByEmail(employee.getEmail())).willReturn(Optional.of(employee));
 
-       // given(employeeRepository.save(employee)).willReturn(employee);
+        // given(employeeRepository.save(employee)).willReturn(employee);
 
         System.out.println(employeeRepository);
         System.out.println(employeeService);
 
         //when - action or the behaviour we are going to test
         org.junit.jupiter.api.Assertions.assertThrows(ResourceNotFoundException.class, () -> {
-                employeeService.saveEmployee(employee);
+            employeeService.saveEmployee(employee);
         });
 
         //then - verify the output
         verify(employeeRepository, never()).save(any(Employee.class));
+    }
 
+    //JUnit test for EmployeeService getAllEmployees method
+    @DisplayName("JUnit test for EmployeeService getAllEmployees method")
+    @Test
+    public void givenEmployeesList_whenGetAllEmployees_thenReturnEmployeesList() {
+        //given - precondition or setup
+        Employee employee1 = Employee.builder()
+                .id(2L)
+                .firstName("Domingo")
+                .lastName("Rivera")
+                .email("domingo.rivera@gmail.com")
+                .build();
+
+        given(employeeRepository.findAll()).willReturn(List.of(employee, employee1));
+
+        //when - action or the behaviour we are going to test
+        List<Employee> employeeList = employeeService.getAllEmployees();
+
+        //then - verify the output
+        Assertions.assertThat(employeeList).isNotNull();
+        Assertions.assertThat(employeeList.size()).isEqualTo(2);
     }
 
 }
