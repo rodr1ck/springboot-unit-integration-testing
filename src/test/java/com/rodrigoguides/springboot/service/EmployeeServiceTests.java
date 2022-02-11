@@ -166,4 +166,19 @@ public class EmployeeServiceTests {
         assertThat(updatedEmployee.getFirstName()).isEqualTo("John");
     }
 
+    //JUnit test for EmployeeService deleteEmployee method
+    @DisplayName("JUnit test for EmployeeService deleteEmployee method")
+    @Test
+    public void givenEmployeeId_whenDeleteEmployee_thenReturnNothing() {
+        //given - precondition or setup
+        long employeeId = 1L;
+        willDoNothing().given(employeeRepository).deleteById(1L);
+
+        //when - action or the behaviour we are going to test
+        employeeService.deleteEmployee(employeeId);
+
+        //then - verify the output
+        verify(employeeRepository, times(1)).deleteById(employeeId);
+    }
+
 }
