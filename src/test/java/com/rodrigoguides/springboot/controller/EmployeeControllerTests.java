@@ -106,4 +106,25 @@ public class EmployeeControllerTests {
                     .andExpect(jsonPath("$.email", is(employee.getEmail())));
         }
 
+    //negative scenario - invalid employee id
+    //JUnit test for EmployeeController getEmployee by method
+    @Test
+    public void givenInvalidEmployeeId_whenGetEmployeeById_thenEmpty() throws Exception{
+        //given - precondition or setup
+        long employeeId = 1L;
+        Employee employee = Employee.builder()
+                .firstName("Domingo")
+                .lastName("Rivera")
+                .email("domingo.rivera@gmail.com")
+                .build();
+        given(employeeService.getEmployeeById(employeeId)).willReturn(Optional.empty());
+
+        //when - action or the behaviour we are going to test
+        ResultActions response = mockMvc.perform(get("/api/employees/{id}", employeeId));
+
+        //then - verify the output
+        response.andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
 }
