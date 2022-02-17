@@ -127,4 +127,38 @@ public class EmployeeControllerTests {
                 .andDo(print());
     }
 
+    //positive scenario - valid employee id
+    //JUnit test for EmployeeController updateEmployee by method
+    @DisplayName("JUnit test for EmployeeController updateEmployee by method")
+            @Test
+            public void givenUpdatedEmployee_whenUpdateEmployee_thenReturnUpdateEmployeeObject() throws Exception{
+                //given - precondition or setup
+                long employeeId = 1L;
+                Employee savedEmployee = Employee.builder()
+                        .firstName("Domingo")
+                        .lastName("Rivera")
+                        .email("domingo.rivera@gmail.com")
+                        .build();
+                Employee updatedEmployee = Employee.builder()
+                        .firstName("Ramon")
+                        .lastName("Carnicer")
+                        .email("ramon.rivera@gmail.com")
+                        .build();
+                given(employeeService.getEmployeeById(employeeId)).willReturn(Optional.of(savedEmployee));
+                given(employeeService.updatedEmployee(ArgumentMatchers.any(Employee.class))).willAnswer((invocation) -> invocation.getArgument(0));
+
+                //when - action or the behaviour we are going to test
+                ResultActions response = mockMvc.perform(put("/api/employees/{id}", employeeId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updatedEmployee)));
+
+                //then - verify the output
+                response.andExpect(status().isOk())
+                        .andDo(print())
+                        .andExpect(jsonPath("$.firstName", is(updatedEmployee.getFirstName())))
+                        .andExpect(jsonPath("$.lastName",is(updatedEmployee.getLastName())))
+                        .andExpect(jsonPath("$.email", is(updatedEmployee.getEmail())));
+
+            }
+
 }
