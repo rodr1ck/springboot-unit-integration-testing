@@ -15,6 +15,7 @@ import org.mockito.ArgumentMatchers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.mockito.BDDMockito.*;
@@ -80,5 +81,29 @@ public class EmployeeControllerTests {
                 .andDo(print())
                 .andExpect(jsonPath("$.size()", is(listOfEmployees.size())));
     }
+
+    //positive scenario - valid employee id
+    //JUnit test for EmployeeController getEmployee by method
+        @Test
+        public void givenEmployeeId_whenGetEmployeeById_thenEmployeeObject() throws Exception{
+            //given - precondition or setup
+            long employeeId = 1L;
+            Employee employee = Employee.builder()
+                    .firstName("Domingo")
+                    .lastName("Rivera")
+                    .email("domingo.rivera@gmail.com")
+                    .build();
+            given(employeeService.getEmployeeById(employeeId)).willReturn(Optional.of(employee));
+
+            //when - action or the behaviour we are going to test
+            ResultActions response = mockMvc.perform(get("/api/employees/{id}", employeeId));
+
+            //then - verify the output
+            response.andExpect(status().isOk())
+                    .andDo(print())
+                    .andExpect(jsonPath("$.firstName", is(employee.getFirstName())))
+                    .andExpect(jsonPath("$.lastName", is(employee.getLastName())))
+                    .andExpect(jsonPath("$.email", is(employee.getEmail())));
+        }
 
 }
