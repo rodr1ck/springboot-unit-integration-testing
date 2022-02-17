@@ -66,7 +66,7 @@ public class EmployeeControllerTests {
     //JUnit test for EmployeeController getAllEmployees method
     @DisplayName("JUnit test for EmployeeController getAllEmployees method")
     @Test
-    public void givenListOfEmployees_whenGetAllEmployees_thenReturnEmployeesList() throws Exception{
+    public void givenListOfEmployees_whenGetAllEmployees_thenReturnEmployeesList() throws Exception {
         //given - precondition or setup
         List<Employee> listOfEmployees = new ArrayList<>();
         listOfEmployees.add(Employee.builder().firstName("Rodrigo").lastName("Orellana").email("rodrigo.orelana@gmail.com").build());
@@ -84,32 +84,32 @@ public class EmployeeControllerTests {
 
     //positive scenario - valid employee id
     //JUnit test for EmployeeController getEmployee by method
-        @Test
-        public void givenEmployeeId_whenGetEmployeeById_thenEmployeeObject() throws Exception{
-            //given - precondition or setup
-            long employeeId = 1L;
-            Employee employee = Employee.builder()
-                    .firstName("Domingo")
-                    .lastName("Rivera")
-                    .email("domingo.rivera@gmail.com")
-                    .build();
-            given(employeeService.getEmployeeById(employeeId)).willReturn(Optional.of(employee));
+    @Test
+    public void givenEmployeeId_whenGetEmployeeById_thenEmployeeObject() throws Exception {
+        //given - precondition or setup
+        long employeeId = 1L;
+        Employee employee = Employee.builder()
+                .firstName("Domingo")
+                .lastName("Rivera")
+                .email("domingo.rivera@gmail.com")
+                .build();
+        given(employeeService.getEmployeeById(employeeId)).willReturn(Optional.of(employee));
 
-            //when - action or the behaviour we are going to test
-            ResultActions response = mockMvc.perform(get("/api/employees/{id}", employeeId));
+        //when - action or the behaviour we are going to test
+        ResultActions response = mockMvc.perform(get("/api/employees/{id}", employeeId));
 
-            //then - verify the output
-            response.andExpect(status().isOk())
-                    .andDo(print())
-                    .andExpect(jsonPath("$.firstName", is(employee.getFirstName())))
-                    .andExpect(jsonPath("$.lastName", is(employee.getLastName())))
-                    .andExpect(jsonPath("$.email", is(employee.getEmail())));
-        }
+        //then - verify the output
+        response.andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.firstName", is(employee.getFirstName())))
+                .andExpect(jsonPath("$.lastName", is(employee.getLastName())))
+                .andExpect(jsonPath("$.email", is(employee.getEmail())));
+    }
 
     //negative scenario - invalid employee id
     //JUnit test for EmployeeController getEmployee by method
     @Test
-    public void givenInvalidEmployeeId_whenGetEmployeeById_thenEmpty() throws Exception{
+    public void givenInvalidEmployeeId_whenGetEmployeeById_thenEmpty() throws Exception {
         //given - precondition or setup
         long employeeId = 1L;
         Employee employee = Employee.builder()
@@ -130,35 +130,66 @@ public class EmployeeControllerTests {
     //positive scenario - valid employee id
     //JUnit test for EmployeeController updateEmployee by method
     @DisplayName("JUnit test for EmployeeController updateEmployee by method")
-            @Test
-            public void givenUpdatedEmployee_whenUpdateEmployee_thenReturnUpdateEmployeeObject() throws Exception{
-                //given - precondition or setup
-                long employeeId = 1L;
-                Employee savedEmployee = Employee.builder()
-                        .firstName("Domingo")
-                        .lastName("Rivera")
-                        .email("domingo.rivera@gmail.com")
-                        .build();
-                Employee updatedEmployee = Employee.builder()
-                        .firstName("Ramon")
-                        .lastName("Carnicer")
-                        .email("ramon.rivera@gmail.com")
-                        .build();
-                given(employeeService.getEmployeeById(employeeId)).willReturn(Optional.of(savedEmployee));
-                given(employeeService.updatedEmployee(ArgumentMatchers.any(Employee.class))).willAnswer((invocation) -> invocation.getArgument(0));
+    @Test
+    public void givenUpdatedEmployee_whenUpdateEmployee_thenReturnUpdateEmployeeObject() throws Exception {
+        //given - precondition or setup
+        long employeeId = 1L;
+        Employee savedEmployee = Employee.builder()
+                .firstName("Domingo")
+                .lastName("Rivera")
+                .email("domingo.rivera@gmail.com")
+                .build();
+        Employee updatedEmployee = Employee.builder()
+                .firstName("Ramon")
+                .lastName("Carnicer")
+                .email("ramon.rivera@gmail.com")
+                .build();
+        given(employeeService.getEmployeeById(employeeId)).willReturn(Optional.of(savedEmployee));
+        given(employeeService.updatedEmployee(ArgumentMatchers.any(Employee.class))).willAnswer((invocation) -> invocation.getArgument(0));
 
-                //when - action or the behaviour we are going to test
-                ResultActions response = mockMvc.perform(put("/api/employees/{id}", employeeId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatedEmployee)));
+        //when - action or the behaviour we are going to test
+        ResultActions response = mockMvc.perform(put("/api/employees/{id}", employeeId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updatedEmployee)));
 
-                //then - verify the output
-                response.andExpect(status().isOk())
-                        .andDo(print())
-                        .andExpect(jsonPath("$.firstName", is(updatedEmployee.getFirstName())))
-                        .andExpect(jsonPath("$.lastName",is(updatedEmployee.getLastName())))
-                        .andExpect(jsonPath("$.email", is(updatedEmployee.getEmail())));
+        //then - verify the output
+        response.andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.firstName", is(updatedEmployee.getFirstName())))
+                .andExpect(jsonPath("$.lastName", is(updatedEmployee.getLastName())))
+                .andExpect(jsonPath("$.email", is(updatedEmployee.getEmail())));
 
-            }
+    }
+
+    //negative scenario - invalid employee id
+    //JUnit test for EmployeeController updateEmployee by method
+    @DisplayName("JUnit test for EmployeeController updateEmployee by method")
+    @Test
+    public void givenUpdatedEmployee_whenUpdateEmployee_thenReturn404() throws Exception {
+        //given - precondition or setup
+        long employeeId = 1L;
+        Employee savedEmployee = Employee.builder()
+                .firstName("Domingo")
+                .lastName("Rivera")
+                .email("domingo.rivera@gmail.com")
+                .build();
+        Employee updatedEmployee = Employee.builder()
+                .firstName("Ramon")
+                .lastName("Carnicer")
+                .email("ramon.rivera@gmail.com")
+                .build();
+        given(employeeService.getEmployeeById(employeeId)).willReturn(Optional.empty());
+        given(employeeService.updatedEmployee(ArgumentMatchers.any(Employee.class))).willAnswer((invocation) -> invocation.getArgument(0));
+
+        //when - action or the behaviour we are going to test
+        ResultActions response = mockMvc.perform(put("/api/employees/{id}", employeeId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updatedEmployee)));
+
+        //then - verify the output
+        response.andExpect(status().isNotFound())
+                .andDo(print());
+
+    }
 
 }
